@@ -14,7 +14,7 @@ session = requests.Session()
 session.headers['User-Agent'] = 'GoodPeopleSiteStarter/0.1 (educational static website; image download)'
 for hero in heroes:
     filename = hero['imageCredit']['source'].split('/wiki/File:', 1)[1]
-    url = 'https://commons.wikimedia.org/wiki/Special:Redirect/file/' + quote(filename, safe='')
+    url = 'https://commons.wikimedia.org/wiki/Special:FilePath/' + quote(filename, safe='') + '?width=1200'
     path = root / hero['image'].lstrip('/')
     path.parent.mkdir(parents=True, exist_ok=True)
     try:

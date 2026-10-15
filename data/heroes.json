@@ -7,17 +7,21 @@
     "description": "Through Mister Rogers' Neighborhood, Fred Rogers taught generations of children that their feelings matter and that every person deserves dignity, patience, and care.",
     "reflection": "Not all heroes wear capes. Some wear cardigans.",
     "image": "/assets/fred-rogers.jpg",
-    "imageCredit": {"author": "Unknown photographer", "license": "CC0 1.0 (per Commons)", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/", "source": "https://commons.wikimedia.org/wiki/File:Fred_Rogers,_late_1960s.jpg"}
+    "width": 280,
+    "height": 354,
+    "imageCredit": {"author": "KUHT", "license": "CC0 1.0 (per Commons)", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/", "source": "https://commons.wikimedia.org/wiki/File:Fred_Rogers,_late_1960s.jpg"}
   },
   {
     "slug": "levar-burton",
     "name": "LeVar Burton",
-    "years": "1957–",
+    "years": "Born 1957",
     "virtue": "Curiosity",
     "description": "As the host of Reading Rainbow, LeVar Burton opened the door to books for countless children and reminded them that curiosity can take you anywhere.",
     "reflection": "A good story can open a thousand doors.",
     "image": "/assets/levar-burton.jpg",
-    "imageCredit": {"author": "Super Festivals", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0/", "source": "https://commons.wikimedia.org/wiki/File:LeVar_Burton_(53199632780).jpg"}
+    "width": 960,
+    "height": 1248,
+    "imageCredit": {"author": "Pedro Heshike for GalaxyCon (Super Festivals)", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0/", "source": "https://commons.wikimedia.org/wiki/File:LeVar_Burton_(53199632780).jpg"}
   },
   {
     "slug": "dolly-parton",
@@ -27,6 +31,8 @@
     "description": "Beyond her music, Dolly Parton has helped children discover the joy of reading through her Imagination Library, which gifts books to young readers.",
     "reflection": "Sometimes the greatest gift is a chance to dream.",
     "image": "/assets/dolly-parton.jpg",
+    "width": 1280,
+    "height": 1412,
     "imageCredit": {"author": "Curtis Hilbun", "license": "CC BY 3.0", "licenseUrl": "https://creativecommons.org/licenses/by/3.0/", "source": "https://commons.wikimedia.org/wiki/File:Dolly_Parton_accepting_Liseberg_Applause_Award_2010_portrait_(headshot).jpg"}
   },
   {
@@ -37,6 +43,8 @@
     "description": "Steve Irwin shared an infectious love of wildlife and inspired people around the world to care about animals and the places they call home.",
     "reflection": "Caring begins when we learn to see the wonder around us.",
     "image": "/assets/steve-irwin.jpg",
+    "width": 326,
+    "height": 434,
     "imageCredit": {"author": "Australia Zoo Pty Ltd", "license": "CC BY-SA 1.0", "licenseUrl": "https://creativecommons.org/licenses/by-sa/1.0/", "source": "https://commons.wikimedia.org/wiki/File:Steve_Irwin_(cropped)_v2.jpg"}
   },
   {
@@ -47,6 +55,8 @@
     "description": "With a gentle voice and a paintbrush, Bob Ross made creativity feel welcoming, showing people that making something beautiful does not require perfection.",
     "reflection": "A little encouragement can change what someone believes is possible.",
     "image": "/assets/bob-ross.jpg",
+    "width": 566,
+    "height": 754,
     "imageCredit": {"author": "Unknown photographer", "license": "Public domain in the United States (per Commons)", "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Public_domain", "source": "https://commons.wikimedia.org/wiki/File:Bob_Ross_publicity_photo_(c._1982)_(cropped).jpg"}
   }
 ]

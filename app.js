@@ -1,83 +1,114 @@
+import { pickDifferent, findBySlug, shareUrl } from './select.mjs';
+
 const container = document.getElementById('hero');
 const another = document.getElementById('another');
 const share = document.getElementById('share');
+const status = document.getElementById('status');
+const shareLabel = share.textContent;
 let heroes = [];
 let active = null;
 
-function randomDifferent() {
-  const choices = heroes.filter(h => h.slug !== active?.slug);
-  const pool = choices.length ? choices : heroes;
+function randomIndex(size) {
   const bytes = new Uint32Array(1);
   crypto.getRandomValues(bytes);
-  return pool[bytes[0] % pool.length];
+  return bytes[0] % size;
 }
 
-function render(hero, updateUrl = true) {
-  active = hero;
-  const image = document.createElement('img');
-  image.className = 'portrait';
-  image.src = hero.image;
-  image.alt = `Portrait of ${hero.name}`;
-  image.onerror = () => { image.style.display = 'none'; };
-  const copy = document.createElement('div');
-  copy.className = 'hero-copy';
-  const virtue = document.createElement('p');
-  virtue.className = 'virtue';
-  virtue.textContent = hero.virtue;
-  const name = document.createElement('h2');
-  name.textContent = hero.name;
-  const years = document.createElement('span');
-  years.className = 'years';
-  years.textContent = hero.years;
-  const desc = document.createElement('p');
-  desc.className = 'description';
-  desc.textContent = hero.description;
-  const quote = document.createElement('p');
-  quote.className = 'reflection';
-  quote.textContent = hero.reflection;
-  const credit = document.createElement('p');
-  credit.className = 'credits';
-  credit.append('Photograph: ', hero.imageCredit.author, ' · ');
-  const a = document.createElement('a');
-  a.href = hero.imageCredit.source;
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function externalLink(href, text) {
+  const a = element('a', null, text);
+  a.href = href;
   a.target = '_blank';
   a.rel = 'noopener noreferrer';
-  a.textContent = 'image source';
-  credit.append(a, ' · ');
-  const license = document.createElement('a');
-  license.href = hero.imageCredit.licenseUrl;
-  license.target = '_blank';
-  license.rel = 'noopener noreferrer';
-  license.textContent = hero.imageCredit.license;
-  credit.append(license);
-  copy.append(virtue, name, years, desc, quote, credit);
-  container.replaceChildren(image, copy);
-  document.title = `${hero.name} — Good People`;
-  if (updateUrl) history.replaceState(null, '', `/?person=${encodeURIComponent(hero.slug)}`);
+  return a;
 }
 
-(async function init() {
+function portrait(hero) {
+  const image = element('img', 'portrait');
+  image.src = hero.image;
+  image.alt = `Portrait of ${hero.name}`;
+  image.width = hero.width;
+  image.height = hero.height;
+  image.decoding = 'async';
+  image.onerror = () => {
+    image.remove();
+    container.classList.add('no-portrait');
+  };
+  return image;
+}
+
+function credits(hero) {
+  const credit = element('p', 'credits');
+  credit.append(
+    'Photograph: ', hero.imageCredit.author, ' · ',
+    externalLink(hero.imageCredit.source, 'image source'), ' · ',
+    externalLink(hero.imageCredit.licenseUrl, hero.imageCredit.license),
+  );
+  return credit;
+}
+
+function render(hero, { updateUrl = true, focusName = false } = {}) {
+  active = hero;
+  const name = element('h2', null, hero.name);
+  name.tabIndex = -1;
+  const copy = element('div', 'hero-copy');
+  copy.append(
+    element('p', 'virtue', hero.virtue),
+    name,
+    element('span', 'years', hero.years),
+    element('p', 'description', hero.description),
+    element('p', 'reflection', hero.reflection),
+    credits(hero),
+  );
+  container.classList.remove('no-portrait');
+  container.replaceChildren(portrait(hero), copy);
+  document.title = `${hero.name} · Good People`;
+  if (updateUrl) history.replaceState(null, '', shareUrl(location.href, hero.slug));
+  if (focusName) name.focus();
+}
+
+function announce(message) {
+  share.textContent = message;
+  status.textContent = message;
+  setTimeout(() => {
+    share.textContent = shareLabel;
+    status.textContent = '';
+  }, 1700);
+}
+
+async function copyLink() {
+  const url = shareUrl(location.href, active.slug);
+  try {
+    await navigator.clipboard.writeText(url);
+    announce('Link copied!');
+  } catch {
+    window.prompt('Copy this link', url);
+  }
+}
+
+async function init() {
   try {
     const response = await fetch('/data/heroes.json');
     if (!response.ok) throw new Error('Unable to load heroes');
     heroes = await response.json();
     if (!heroes.length) throw new Error('No heroes found');
     const slug = new URLSearchParams(location.search).get('person');
-    render(heroes.find(h => h.slug === slug) || randomDifferent(), Boolean(slug));
-    another.addEventListener('click', () => render(randomDifferent()));
-    share.addEventListener('click', async () => {
-      const url = new URL(location.href);
-      url.searchParams.set('person', active.slug);
-      try {
-        await navigator.clipboard.writeText(url.toString());
-        share.textContent = 'Link copied!';
-        setTimeout(() => share.textContent = 'Copy their link', 1700);
-      } catch {
-        window.prompt('Copy this link', url.toString());
-      }
+    const first = findBySlug(heroes, slug) || pickDifferent(heroes, null, randomIndex);
+    render(first, { updateUrl: Boolean(slug) });
+    another.addEventListener('click', () => {
+      render(pickDifferent(heroes, active.slug, randomIndex), { focusName: true });
     });
+    share.addEventListener('click', copyLink);
   } catch (e) {
     container.textContent = 'Unable to load the stories. Please refresh the page.';
     console.error(e);
   }
-})();
+}
+
+init();
