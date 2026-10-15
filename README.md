@@ -6,18 +6,22 @@ Static, dependency-free site: HTML + CSS + JavaScript + JSON. Designed for AWS S
 
 ## Set up
 
-1. `python -m pip install requests`
-2. `python tools/download_images.py` (downloads the five selected Wikimedia Commons photographs into `assets/`)
-3. `python -m http.server 8000` (run from the project directory)
-4. Visit http://localhost:8000
+1. `python -m pip install requests` (the download tool's only dependency)
+2. `python tools/download_images.py` (downloads each person's Wikimedia Commons photograph into `assets/` as a 1200px-wide thumbnail)
+3. `python -m http.server 8000 --bind 127.0.0.1` (run from the project directory)
+4. Visit http://127.0.0.1:8000
 
-The initial ZIP intentionally contains only source and photo download tooling, not third-party photo binaries. If automated download fails, open the `imageCredit.source` page for the relevant person in `data/heroes.json`, download that file manually, and save it under the corresponding `image` path. Check the exact file licensing before publishing.
+`assets/` is not committed. If automated download fails, open the `imageCredit.source` page for the relevant person in `data/heroes.json`, download that file manually, and save it under the corresponding `image` path. Record the downloaded file's pixel `width` and `height` in the entry. Check the exact file licensing before publishing.
+
+## Test
+
+`node --test` from the project directory. Uses Node's built-in test runner, no packages. The tests cover the selection and share-link logic in `select.mjs` and validate every entry in `data/heroes.json` (required fields, unique slugs, years format, image path and dimensions, licence and source links).
 
 ## Deploy
 
-Upload `index.html`, `style.css`, `app.js`, `data/`, and `assets/` to your S3 site bucket. For a public site, prefer private S3 + CloudFront Origin Access Control + HTTPS. All routes work with S3 because person links use `/?person=<slug>` rather than client-side path rewrites.
+The site lives at https://heroesamongus.art in a private S3 bucket behind CloudFront with an origin access control. `DEPLOY.md` records the resources and the exact upload commands. All routes work with S3 because person links use `/?person=<slug>` rather than client-side path rewrites.
 
-Recommended cache headers: HTML short TTL; data/heroes.json 5 minutes to 1 hour; versioned assets long cache. The browser cache policy for app.js should also be short unless you version asset filenames.
+Cache headers: HTML, CSS, JS and `data/heroes.json` are uploaded with `max-age=300`; portraits with `max-age=86400`. Invalidate the distribution after each upload.
 
 ## Editorial notes
 
@@ -25,4 +29,4 @@ Recommended cache headers: HTML short TTL; data/heroes.json 5 minutes to 1 hour;
 
 ## Add a person
 
-Add a new object to `data/heroes.json` with a unique slug, write a short verified description, find an appropriately licensed photo, download to `assets/`, record photographer/license/source. No code changes needed.
+Add a new object to `data/heroes.json` with a unique slug, write a short verified description, find an appropriately licensed photo, download to `assets/`, record photographer/license/source and the image's pixel width and height. Run `node --test` to check the entry. No code changes needed.
