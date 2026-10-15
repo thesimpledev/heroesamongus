@@ -10,14 +10,18 @@ export function findBySlug(heroes, slug) {
   return heroes.find(hero => hero.slug === slug);
 }
 
-export function shareUrl(href, slug) {
-  const url = new URL(href);
-  url.searchParams.set('person', slug);
-  return url.toString();
+export function personHref(slug) {
+  return `/people/${encodeURIComponent(slug)}`;
 }
 
-export function personHref(slug) {
-  return `/?person=${encodeURIComponent(slug)}`;
+export function shareUrl(href, slug) {
+  return new URL(personHref(slug), href).toString();
+}
+
+export function slugFromLocation(pathname, search) {
+  const match = /^\/people\/([^/]+)$/.exec(pathname);
+  if (match) return decodeURIComponent(match[1]);
+  return new URLSearchParams(search).get('person');
 }
 
 const LAST_KEY = 'goodpeople:last';

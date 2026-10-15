@@ -1,4 +1,4 @@
-import { pickDifferent, findBySlug, shareUrl, readLast, writeLast } from './select.mjs';
+import { pickDifferent, findBySlug, shareUrl, personHref, slugFromLocation, readLast, writeLast } from './select.mjs';
 import { element, externalLink, portrait } from './dom.mjs';
 
 const container = document.getElementById('hero');
@@ -55,7 +55,7 @@ function render(hero, { updateUrl = true, focusName = false } = {}) {
   container.replaceChildren(portrait(hero, { onError: hidePortrait }), copy);
   writeLast(storage(), hero.slug);
   document.title = `${hero.name} · Good People`;
-  if (updateUrl) history.replaceState(null, '', shareUrl(location.href, hero.slug));
+  if (updateUrl) history.replaceState(null, '', personHref(hero.slug));
   if (focusName) name.focus();
 }
 
@@ -84,7 +84,7 @@ async function init() {
     if (!response.ok) throw new Error('Unable to load heroes');
     heroes = await response.json();
     if (!heroes.length) throw new Error('No heroes found');
-    const slug = new URLSearchParams(location.search).get('person');
+    const slug = slugFromLocation(location.pathname, location.search) || document.body.dataset.person || null;
     const first = findBySlug(heroes, slug) || pickDifferent(heroes, readLast(storage()), randomIndex);
     render(first, { updateUrl: Boolean(slug) });
     another.addEventListener('click', () => {

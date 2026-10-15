@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f1e9">
+  <meta name="description" content="{{.Description}}">
+  <title>{{.Title}}</title>
+  <link rel="canonical" href="{{.Canonical}}">
+  <meta property="og:site_name" content="{{.SiteName}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{.Canonical}}">
+{{- if .Person}}
+  <meta property="og:title" content="{{.Person.Name}}">
+  <meta property="og:description" content="{{.Person.Description}}">
+  <meta property="og:image" content="{{.ImageURL}}">
+  <meta property="og:image:width" content="{{.Person.Width}}">
+  <meta property="og:image:height" content="{{.Person.Height}}">
+  <meta property="og:image:alt" content="Portrait of {{.Person.Name}}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{.Person.Name}}">
+  <meta name="twitter:description" content="{{.Person.Description}}">
+  <meta name="twitter:image" content="{{.ImageURL}}">
+{{- else}}
+  <meta property="og:title" content="{{.SiteName}}">
+  <meta property="og:description" content="{{.Tagline}}">
+{{- end}}
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%20fill='%23ae6f41'%3E%E2%9C%B3%3C/text%3E%3C/svg%3E">
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+{{- if .Person}}
+<body data-person="{{.Person.Slug}}">
+{{- else}}
+<body>
+{{- end}}
+  <header>
+    <a class="wordmark" href="/">GOOD PEOPLE<span class="asterisk">✳</span></a>
+    <span class="topnote">A little reminder that good people exist.</span>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false"><span class="theme-glyph" aria-hidden="true">☾</span><span class="visually-hidden">Switch to dark mode</span></button>
+  </header>
+  <main>
+    <div class="intro"><p class="eyebrow">A moment of good</p><h1>Some people make the world <em>kinder.</em></h1><p>Here is one of them.</p></div>
+    <article id="hero" class="hero">
+{{- if .Person}}
+      <img class="portrait" src="{{.Person.Image}}" alt="Portrait of {{.Person.Name}}" width="{{.Person.Width}}" height="{{.Person.Height}}" decoding="async">
+      <div class="hero-copy">
+        <p class="virtue">{{.Person.Virtue}}</p>
+        <h2 tabindex="-1">{{.Person.Name}}</h2>
+        <span class="years">{{.Person.Years}}</span>
+        <p class="description">{{.Person.Description}}</p>
+        <p class="reflection">{{.Person.Reflection}}</p>
+        <p class="credits">Photograph: {{.Person.ImageCredit.Author}} · <a href="{{.Person.ImageCredit.Source}}" target="_blank" rel="noopener noreferrer">image source</a> · <a href="{{.Person.ImageCredit.LicenseURL}}" target="_blank" rel="noopener noreferrer">{{.Person.ImageCredit.License}}</a></p>
+      </div>
+{{- else}}
+      <p class="loading">Finding someone wonderful…</p>
+      <noscript><p class="loading-fallback">This page needs JavaScript to introduce someone. Please enable it and reload.</p></noscript>
+{{- end}}
+    </article>
+    <div class="actions"><button type="button" id="another">Meet another good person <span aria-hidden="true">↗</span></button><button type="button" id="share" class="subtle">Copy their link</button></div>
+    <p id="status" class="visually-hidden" role="status"></p>
+  </main>
+  <footer>
+    <span>Small stories. Real people. A little more hope.</span>
+    <span><a href="/people">See everyone</a> · <a href="/about">Why they're here</a></span>
+    <span>Made by <a href="https://thesimpledev.com">thesimpledev</a> · <a href="https://github.com/thesimpledev/heroesamongus">Source on GitHub</a></span>
+  </footer>
+</body>
+</html>

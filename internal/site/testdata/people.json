@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "example-one",
+    "name": "Example One",
+    "years": "1900–1980",
+    "virtue": "Kindness",
+    "description": "A made-up person used only by the tests. Their description mentions <nothing> special.",
+    "reflection": "A synthetic reflection for testing.",
+    "image": "/assets/example-one.jpg",
+    "width": 1200,
+    "height": 1600,
+    "imageCredit": {"author": "Example Photographer", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0/", "source": "https://commons.wikimedia.org/wiki/File:Example_One.jpg"}
+  },
+  {
+    "slug": "example-two",
+    "name": "Example Two",
+    "years": "Born 1950",
+    "virtue": "Wonder",
+    "description": "Another made-up person used only by the tests.",
+    "reflection": "A second synthetic reflection.",
+    "image": "/assets/example-two.jpg",
+    "width": 900,
+    "height": 1200,
+    "imageCredit": {"author": "Another Photographer", "license": "Public domain in the United States (per Commons)", "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Public_domain", "source": "https://commons.wikimedia.org/wiki/File:Example_Two.jpg"}
+  }
+]

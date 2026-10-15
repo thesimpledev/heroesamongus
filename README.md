@@ -4,7 +4,9 @@ A little reminder that good people exist.
 
 Static, dependency-free site: HTML + CSS + JavaScript + JSON. Designed for AWS S3 + optional CloudFront.
 
-Pages: the home page (one random person per visit), `gallery.html` (everyone), `about.html` (why they're here) and `404.html`. A header button switches between the light and a warm grey dark theme; the choice is remembered in the browser, otherwise the system preference applies.
+Pages: the home page (one random person per visit), `/people/<slug>` (one page per person, with sharing metadata), `/people` (everyone), `/about` (why they're here) and the 404 page. A header button switches between the light and a warm grey dark theme; the choice is remembered in the browser, otherwise the system preference applies.
+
+The home page and the person pages are generated from `templates/page.html.tmpl` by `go run ./cmd/sitegen` (standard library only), which also writes `sitemap.xml` and `robots.txt`. Generated files are not committed. Clean URLs are mapped to files by the CloudFront Function in `edge/urls.js`.
 
 ## Set up
 
@@ -16,15 +18,15 @@ curl -sSL --create-dirs -A 'GoodPeopleSite/0.1 (heroesamongus.art)' -o assets/<s
 
 Commons returns the original when it is narrower than 1200px. A PNG source comes back as PNG; convert it with `magick assets/<slug>.png -quality 85 assets/<slug>.jpg`. Record the downloaded file's pixel `width` and `height` in the entry (`identify assets/<slug>.jpg`). Check the exact file licensing before publishing.
 
-Local preview: `python -m http.server 8000 --bind 127.0.0.1` from the project directory, then visit http://127.0.0.1:8000.
+Local preview: `go run ./cmd/sitegen`, then `python -m http.server 8000 --bind 127.0.0.1` from the project directory and visit http://127.0.0.1:8000. The local server has no URL mapping, so open person pages as `/p/<slug>.html` and the other pages by file name.
 
 ## Test
 
-`node --test` from the project directory. Uses Node's built-in test runner, no packages. The tests cover the selection and share-link logic in `select.mjs` and validate every entry in `data/heroes.json` (required fields, unique slugs, years format, image path and dimensions, licence and source links).
+`node --test` and `go test ./...` from the project directory, no packages. The Node tests cover the selection, link and theme logic, the CloudFront Function in `edge/urls.js`, and validate every entry in `data/heroes.json` (required fields, unique slugs, years format, image path and dimensions, licence and source links). The Go tests cover the generator against a synthetic fixture.
 
 ## Deploy
 
-The site lives at https://heroesamongus.art in a private S3 bucket behind CloudFront with an origin access control. Pushing a `v*` tag runs the GitHub Actions workflow in `.github/workflows/deploy.yml`, which assumes an AWS role through OIDC, uploads the site and invalidates the cache. `DEPLOY.md` records the resources and a manual fallback. All routes work with S3 because person links use `/?person=<slug>` rather than client-side path rewrites.
+The site lives at https://heroesamongus.art in a private S3 bucket behind CloudFront with an origin access control. Pushing a `v*` tag runs the GitHub Actions workflow in `.github/workflows/deploy.yml`, which runs the tests, generates the pages, assumes an AWS role through OIDC, uploads the site and invalidates the cache. `DEPLOY.md` records the flow and a manual fallback. Old `/?person=<slug>` links redirect permanently to `/people/<slug>`.
 
 Cache headers: HTML, CSS, JS and `data/heroes.json` are uploaded with `max-age=300`; portraits with `max-age=86400`. Invalidate the distribution after each upload.
 

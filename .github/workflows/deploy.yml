@@ -7,7 +7,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moves to Ubuntu 26 on 2026-10-19 and the cached Go
+    # versions change with it.
+    runs-on: ubuntu-24.04
 
     permissions:
       id-token: write
@@ -19,7 +21,15 @@ jobs:
         --exclude ".git/*"
         --exclude ".github/*"
         --exclude "test/*"
+        --exclude "cmd/*"
+        --exclude "internal/*"
+        --exclude "templates/*"
+        --exclude "edge/*"
         --exclude ".gitignore"
+        --exclude "go.mod"
+        --exclude "go.sum"
+        --exclude ".goaudit-capslock.json"
+        --exclude "goaudit-report.json"
         --exclude "CLAUDE.md"
         --exclude "DEPLOY.md"
         --exclude "LICENSE"
@@ -33,8 +43,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Set up Go (cached on the runner, nothing downloaded)
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: 1.26.8
+          cache: false
+
       - name: Run tests
-        run: node --test
+        run: |
+          node --test
+          go test ./...
+
+      - name: Generate pages
+        run: go run ./cmd/sitegen
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
@@ -51,10 +72,11 @@ jobs:
           aws s3 sync assets/ "s3://${BUCKET}/assets/" --only-show-errors \
             --cache-control "public, max-age=86400"
 
-      - name: Upload stylesheet, script and data
+      - name: Upload stylesheet, scripts, data, sitemap
         run: |
           aws s3 sync . "s3://${BUCKET}" --only-show-errors ${NOT_SITE} \
             --exclude "*" --include "*.css" --include "*.js" --include "data/*.json" \
+            --include "sitemap.xml" --include "robots.txt" \
             --cache-control "public, max-age=300"
           aws s3 sync . "s3://${BUCKET}" --only-show-errors ${NOT_SITE} \
             --exclude "*" --include "*.mjs" \
@@ -83,3 +105,4 @@ jobs:
       - name: Check the live site
         run: |
           curl -sSf -o /dev/null -w "%{http_code} %{content_type}\n" https://heroesamongus.art/
+          curl -sSf -o /dev/null -w "%{http_code} %{content_type}\n" https://heroesamongus.art/people/fred-rogers

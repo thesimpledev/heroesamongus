@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pickDifferent, findBySlug, shareUrl, personHref, readLast, writeLast } from '../select.mjs';
+import { pickDifferent, findBySlug, shareUrl, personHref, slugFromLocation, readLast, writeLast } from '../select.mjs';
 
 const heroes = [
   { slug: 'a', name: 'A' },
@@ -47,21 +47,39 @@ test('findBySlug returns undefined for unknown or missing slugs', () => {
   assert.equal(findBySlug(heroes, ''), undefined);
 });
 
-test('shareUrl sets the person query parameter', () => {
-  assert.equal(shareUrl('https://example.com/', 'fred-rogers'), 'https://example.com/?person=fred-rogers');
+test('shareUrl builds the clean person URL on the current origin', () => {
+  assert.equal(shareUrl('https://example.com/', 'fred-rogers'), 'https://example.com/people/fred-rogers');
 });
 
-test('shareUrl replaces an existing person parameter', () => {
-  assert.equal(shareUrl('https://example.com/?person=old', 'new'), 'https://example.com/?person=new');
+test('shareUrl ignores the path and query of the current page', () => {
+  assert.equal(shareUrl('https://example.com/?person=old', 'new'), 'https://example.com/people/new');
+  assert.equal(shareUrl('https://example.com/people/old', 'new'), 'https://example.com/people/new');
 });
 
 test('shareUrl encodes the slug', () => {
-  assert.equal(shareUrl('https://example.com/', 'a b&c'), 'https://example.com/?person=a+b%26c');
+  assert.equal(shareUrl('https://example.com/', 'a b&c'), 'https://example.com/people/a%20b%26c');
 });
 
-test('personHref builds a root-relative link for a slug', () => {
-  assert.equal(personHref('fred-rogers'), '/?person=fred-rogers');
-  assert.equal(personHref('a b&c'), '/?person=a%20b%26c');
+test('personHref builds a root-relative clean link for a slug', () => {
+  assert.equal(personHref('fred-rogers'), '/people/fred-rogers');
+  assert.equal(personHref('a b&c'), '/people/a%20b%26c');
+});
+
+test('slugFromLocation reads the clean path first', () => {
+  assert.equal(slugFromLocation('/people/fred-rogers', ''), 'fred-rogers');
+  assert.equal(slugFromLocation('/people/fred-rogers', '?person=other'), 'fred-rogers');
+});
+
+test('slugFromLocation falls back to the legacy query', () => {
+  assert.equal(slugFromLocation('/', '?person=bob-ross'), 'bob-ross');
+  assert.equal(slugFromLocation('/index.html', '?person=bob-ross'), 'bob-ross');
+});
+
+test('slugFromLocation returns null when there is no person', () => {
+  assert.equal(slugFromLocation('/', ''), null);
+  assert.equal(slugFromLocation('/people', ''), null);
+  assert.equal(slugFromLocation('/people/', ''), null);
+  assert.equal(slugFromLocation('/about', ''), null);
 });
 
 function fakeStorage(initial = {}) {
