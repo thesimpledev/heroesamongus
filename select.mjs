@@ -16,6 +16,10 @@ export function shareUrl(href, slug) {
   return url.toString();
 }
 
+export function personHref(slug) {
+  return `/?person=${encodeURIComponent(slug)}`;
+}
+
 const LAST_KEY = 'goodpeople:last';
 
 export function readLast(storage) {

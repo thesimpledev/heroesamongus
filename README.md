@@ -4,6 +4,8 @@ A little reminder that good people exist.
 
 Static, dependency-free site: HTML + CSS + JavaScript + JSON. Designed for AWS S3 + optional CloudFront.
 
+Pages: the home page (one random person per visit), `gallery.html` (everyone), `about.html` (why they're here) and `404.html`. A header button switches between the light and a warm grey dark theme; the choice is remembered in the browser, otherwise the system preference applies.
+
 ## Set up
 
 Portraits are committed under `assets/`. To add one, download it from Wikimedia Commons as a 1200px-wide thumbnail, using the file name from the entry's `imageCredit.source` page:

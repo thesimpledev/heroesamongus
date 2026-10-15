@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f1e9">
+  <meta name="description" content="Everyone on Good People, in one place.">
+  <title>The Gallery · Good People</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%20fill='%23ae6f41'%3E%E2%9C%B3%3C/text%3E%3C/svg%3E">
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/gallery.js"></script>
+</head>
+<body>
+  <header>
+    <a class="wordmark" href="/">GOOD PEOPLE<span class="asterisk">✳</span></a>
+    <span class="topnote">A little reminder that good people exist.</span>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false"><span class="theme-glyph" aria-hidden="true">☾</span><span class="visually-hidden">Switch to dark mode</span></button>
+  </header>
+  <main>
+    <div class="intro"><p class="eyebrow">The Gallery</p><h1>Everyone, <em>so far.</em></h1><p>Pick a face to read their story.</p></div>
+    <div id="gallery" class="gallery">
+      <p class="loading">Gathering everyone…</p>
+      <noscript><p class="loading-fallback">This page needs JavaScript to show the gallery. Please enable it and reload.</p></noscript>
+    </div>
+    <div class="actions"><a class="button" href="/">Meet a good person</a></div>
+  </main>
+  <footer>
+    <span>Small stories. Real people. A little more hope.</span>
+    <span><a href="/gallery.html">See everyone</a> · <a href="/about.html">Why they're here</a></span>
+    <span>Made by <a href="https://thesimpledev.com">thesimpledev</a> · <a href="https://github.com/thesimpledev/heroesamongus">Source on GitHub</a></span>
+  </footer>
+</body>
+</html>

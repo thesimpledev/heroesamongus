@@ -1,4 +1,5 @@
 import { pickDifferent, findBySlug, shareUrl, readLast, writeLast } from './select.mjs';
+import { element, externalLink, portrait } from './dom.mjs';
 
 const container = document.getElementById('hero');
 const another = document.getElementById('another');
@@ -22,35 +23,6 @@ function randomIndex(size) {
   return bytes[0] % size;
 }
 
-function element(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-function externalLink(href, text) {
-  const a = element('a', null, text);
-  a.href = href;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  return a;
-}
-
-function portrait(hero) {
-  const image = element('img', 'portrait');
-  image.src = hero.image;
-  image.alt = `Portrait of ${hero.name}`;
-  image.width = hero.width;
-  image.height = hero.height;
-  image.decoding = 'async';
-  image.onerror = () => {
-    image.remove();
-    container.classList.add('no-portrait');
-  };
-  return image;
-}
-
 function credits(hero) {
   const credit = element('p', 'credits');
   credit.append(
@@ -59,6 +31,11 @@ function credits(hero) {
     externalLink(hero.imageCredit.licenseUrl, hero.imageCredit.license),
   );
   return credit;
+}
+
+function hidePortrait(image) {
+  image.remove();
+  container.classList.add('no-portrait');
 }
 
 function render(hero, { updateUrl = true, focusName = false } = {}) {
@@ -75,7 +52,7 @@ function render(hero, { updateUrl = true, focusName = false } = {}) {
     credits(hero),
   );
   container.classList.remove('no-portrait');
-  container.replaceChildren(portrait(hero), copy);
+  container.replaceChildren(portrait(hero, { onError: hidePortrait }), copy);
   writeLast(storage(), hero.slug);
   document.title = `${hero.name} · Good People`;
   if (updateUrl) history.replaceState(null, '', shareUrl(location.href, hero.slug));

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pickDifferent, findBySlug, shareUrl, readLast, writeLast } from '../select.mjs';
+import { pickDifferent, findBySlug, shareUrl, personHref, readLast, writeLast } from '../select.mjs';
 
 const heroes = [
   { slug: 'a', name: 'A' },
@@ -57,6 +57,11 @@ test('shareUrl replaces an existing person parameter', () => {
 
 test('shareUrl encodes the slug', () => {
   assert.equal(shareUrl('https://example.com/', 'a b&c'), 'https://example.com/?person=a+b%26c');
+});
+
+test('personHref builds a root-relative link for a slug', () => {
+  assert.equal(personHref('fred-rogers'), '/?person=fred-rogers');
+  assert.equal(personHref('a b&c'), '/?person=a%20b%26c');
 });
 
 function fakeStorage(initial = {}) {
