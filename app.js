@@ -1,4 +1,4 @@
-import { pickDifferent, findBySlug, shareUrl } from './select.mjs';
+import { pickDifferent, findBySlug, shareUrl, readLast, writeLast } from './select.mjs';
 
 const container = document.getElementById('hero');
 const another = document.getElementById('another');
@@ -7,6 +7,14 @@ const status = document.getElementById('status');
 const shareLabel = share.textContent;
 let heroes = [];
 let active = null;
+
+function storage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
 
 function randomIndex(size) {
   const bytes = new Uint32Array(1);
@@ -68,6 +76,7 @@ function render(hero, { updateUrl = true, focusName = false } = {}) {
   );
   container.classList.remove('no-portrait');
   container.replaceChildren(portrait(hero), copy);
+  writeLast(storage(), hero.slug);
   document.title = `${hero.name} · Good People`;
   if (updateUrl) history.replaceState(null, '', shareUrl(location.href, hero.slug));
   if (focusName) name.focus();
@@ -99,7 +108,7 @@ async function init() {
     heroes = await response.json();
     if (!heroes.length) throw new Error('No heroes found');
     const slug = new URLSearchParams(location.search).get('person');
-    const first = findBySlug(heroes, slug) || pickDifferent(heroes, null, randomIndex);
+    const first = findBySlug(heroes, slug) || pickDifferent(heroes, readLast(storage()), randomIndex);
     render(first, { updateUrl: Boolean(slug) });
     another.addEventListener('click', () => {
       render(pickDifferent(heroes, active.slug, randomIndex), { focusName: true });

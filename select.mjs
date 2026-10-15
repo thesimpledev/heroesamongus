@@ -15,3 +15,21 @@ export function shareUrl(href, slug) {
   url.searchParams.set('person', slug);
   return url.toString();
 }
+
+const LAST_KEY = 'goodpeople:last';
+
+export function readLast(storage) {
+  try {
+    return storage?.getItem(LAST_KEY) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeLast(storage, slug) {
+  try {
+    storage?.setItem(LAST_KEY, slug);
+  } catch {
+    // Storage can be blocked or full; forgetting the last person is harmless.
+  }
+}
