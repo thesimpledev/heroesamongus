@@ -2,7 +2,7 @@
 
 Static site: `index.html`, `style.css`, `app.js` (ES module) with the pure logic in
 `select.mjs`, people in `data/heroes.json`, portraits in `assets/` (ignored by git,
-downloaded from Wikimedia Commons by `tools/download_images.py`).
+downloaded from Wikimedia Commons with the curl recipe in `README.md`).
 
 - Tests: `node --test` from the project root (Node built-in runner, no packages).
   `test/select.test.mjs` covers the selection and share-link logic;

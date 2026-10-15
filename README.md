@@ -6,12 +6,15 @@ Static, dependency-free site: HTML + CSS + JavaScript + JSON. Designed for AWS S
 
 ## Set up
 
-1. `python -m pip install requests` (the download tool's only dependency)
-2. `python tools/download_images.py` (downloads each person's Wikimedia Commons photograph into `assets/` as a 1200px-wide thumbnail)
-3. `python -m http.server 8000 --bind 127.0.0.1` (run from the project directory)
-4. Visit http://127.0.0.1:8000
+`assets/` is not committed. Download each portrait from Wikimedia Commons as a 1200px-wide thumbnail, using the file name from the entry's `imageCredit.source` page:
 
-`assets/` is not committed. If automated download fails, open the `imageCredit.source` page for the relevant person in `data/heroes.json`, download that file manually, and save it under the corresponding `image` path. Record the downloaded file's pixel `width` and `height` in the entry. Check the exact file licensing before publishing.
+```
+curl -sSL --create-dirs -A 'GoodPeopleSite/0.1 (heroesamongus.art)' -o assets/<slug>.jpg 'https://commons.wikimedia.org/wiki/Special:FilePath/<File name>?width=1200'
+```
+
+Commons returns the original when it is narrower than 1200px. A PNG source comes back as PNG; convert it with `magick assets/<slug>.png -quality 85 assets/<slug>.jpg`. Record the downloaded file's pixel `width` and `height` in the entry (`identify assets/<slug>.jpg`). Check the exact file licensing before publishing.
+
+Local preview: `python -m http.server 8000 --bind 127.0.0.1` from the project directory, then visit http://127.0.0.1:8000.
 
 ## Test
 

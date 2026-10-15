@@ -7,9 +7,9 @@
     "description": "Through Mister Rogers' Neighborhood, Fred Rogers taught generations of children that their feelings matter and that every person deserves dignity, patience, and care.",
     "reflection": "Not all heroes wear capes. Some wear cardigans.",
     "image": "/assets/fred-rogers.jpg",
-    "width": 280,
-    "height": 354,
-    "imageCredit": {"author": "KUHT", "license": "CC0 1.0 (per Commons)", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/", "source": "https://commons.wikimedia.org/wiki/File:Fred_Rogers,_late_1960s.jpg"}
+    "width": 1280,
+    "height": 1688,
+    "imageCredit": {"author": "Terry Arthur (press photo, 1982)", "license": "Public domain in the United States (per Commons)", "licenseUrl": "https://commons.wikimedia.org/wiki/Commons:Public_domain", "source": "https://commons.wikimedia.org/wiki/File:Press_Photo_of_Fred_Rogers_(Published_by_1982)_(cropped).png"}
   },
   {
     "slug": "levar-burton",
@@ -43,9 +43,9 @@
     "description": "Steve Irwin shared an infectious love of wildlife and inspired people around the world to care about animals and the places they call home.",
     "reflection": "Caring begins when we learn to see the wonder around us.",
     "image": "/assets/steve-irwin.jpg",
-    "width": 326,
-    "height": 434,
-    "imageCredit": {"author": "Australia Zoo Pty Ltd", "license": "CC BY-SA 1.0", "licenseUrl": "https://creativecommons.org/licenses/by-sa/1.0/", "source": "https://commons.wikimedia.org/wiki/File:Steve_Irwin_(cropped)_v2.jpg"}
+    "width": 970,
+    "height": 815,
+    "imageCredit": {"author": "Richard Giles", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0/", "source": "https://commons.wikimedia.org/wiki/File:Steve_Irwin.jpg"}
   },
   {
     "slug": "bob-ross",
