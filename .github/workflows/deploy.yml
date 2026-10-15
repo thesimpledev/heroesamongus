@@ -1,0 +1,85 @@
+name: Deploy Website
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      # Files in the repository that are not part of the served site.
+      NOT_SITE: >-
+        --exclude ".git/*"
+        --exclude ".github/*"
+        --exclude "test/*"
+        --exclude ".gitignore"
+        --exclude "CLAUDE.md"
+        --exclude "DEPLOY.md"
+        --exclude "LICENSE"
+        --exclude "README.md"
+      # Resource identifiers are repository secrets so the public job log
+      # never shows them.
+      BUCKET: ${{ secrets.PROD_S3_BUCKET }}
+      DISTRIBUTION: ${{ secrets.PROD_CLOUDFRONT_DISTRIBUTION_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run tests
+        run: node --test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          role-to-assume: ${{ secrets.WEBSITE_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-2
+
+      # Upload in phases so a visitor mid-deploy never lands on a page whose
+      # files are missing: portraits, then code and data, then HTML, and
+      # deletions only after every edge serves the new HTML.
+
+      - name: Upload portraits
+        run: |
+          aws s3 sync assets/ "s3://${BUCKET}/assets/" --only-show-errors \
+            --cache-control "public, max-age=86400"
+
+      - name: Upload stylesheet, script and data
+        run: |
+          aws s3 sync . "s3://${BUCKET}" --only-show-errors ${NOT_SITE} \
+            --exclude "*" --include "*.css" --include "*.js" --include "data/*.json" \
+            --cache-control "public, max-age=300"
+          aws s3 sync . "s3://${BUCKET}" --only-show-errors ${NOT_SITE} \
+            --exclude "*" --include "*.mjs" \
+            --content-type "text/javascript" \
+            --cache-control "public, max-age=300"
+
+      - name: Upload HTML
+        run: |
+          aws s3 sync . "s3://${BUCKET}" --only-show-errors ${NOT_SITE} \
+            --exclude "*" --include "*.html" \
+            --cache-control "public, max-age=300"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          ID=$(aws cloudfront create-invalidation \
+            --distribution-id "${DISTRIBUTION}" \
+            --paths "/*" --query 'Invalidation.Id' --output text)
+          echo "waiting on invalidation"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "${DISTRIBUTION}" --id "$ID"
+
+      - name: Remove files from previous deploys
+        run: |
+          aws s3 sync . "s3://${BUCKET}" --delete --only-show-errors ${NOT_SITE}
+
+      - name: Check the live site
+        run: |
+          curl -sSf -o /dev/null -w "%{http_code} %{content_type}\n" https://heroesamongus.art/

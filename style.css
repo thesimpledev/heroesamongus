@@ -219,6 +219,11 @@ button.subtle:hover {
 
 footer {
   border-top: 1px solid #e5e1d8;
+  flex-wrap: wrap;
+}
+
+footer a {
+  color: inherit;
 }
 
 @media (max-width: 700px) {

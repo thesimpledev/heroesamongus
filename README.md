@@ -6,7 +6,7 @@ Static, dependency-free site: HTML + CSS + JavaScript + JSON. Designed for AWS S
 
 ## Set up
 
-`assets/` is not committed. Download each portrait from Wikimedia Commons as a 1200px-wide thumbnail, using the file name from the entry's `imageCredit.source` page:
+Portraits are committed under `assets/`. To add one, download it from Wikimedia Commons as a 1200px-wide thumbnail, using the file name from the entry's `imageCredit.source` page:
 
 ```
 curl -sSL --create-dirs -A 'GoodPeopleSite/0.1 (heroesamongus.art)' -o assets/<slug>.jpg 'https://commons.wikimedia.org/wiki/Special:FilePath/<File name>?width=1200'
@@ -22,7 +22,7 @@ Local preview: `python -m http.server 8000 --bind 127.0.0.1` from the project di
 
 ## Deploy
 
-The site lives at https://heroesamongus.art in a private S3 bucket behind CloudFront with an origin access control. `DEPLOY.md` records the resources and the exact upload commands. All routes work with S3 because person links use `/?person=<slug>` rather than client-side path rewrites.
+The site lives at https://heroesamongus.art in a private S3 bucket behind CloudFront with an origin access control. Pushing a `v*` tag runs the GitHub Actions workflow in `.github/workflows/deploy.yml`, which assumes an AWS role through OIDC, uploads the site and invalidates the cache. `DEPLOY.md` records the resources and a manual fallback. All routes work with S3 because person links use `/?person=<slug>` rather than client-side path rewrites.
 
 Cache headers: HTML, CSS, JS and `data/heroes.json` are uploaded with `max-age=300`; portraits with `max-age=86400`. Invalidate the distribution after each upload.
 
